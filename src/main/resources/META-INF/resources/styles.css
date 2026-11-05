@@ -27,3 +27,26 @@ vaadin-side-nav:has(vaadin-side-nav-item:only-child)::after {
     min-width: 100%;
     white-space: normal;
 }
+
+/* --- Faza 1: Task List ---------------------------------------------------- */
+
+/*
+ * Grid celije su u shadow DOM-u, pa obican CSS selektor ne moze do njih.
+ * ::part(...) je standardni nacin: Java kod (setPartNameGenerator) celiji doda part "overdue",
+ * a ovde ga stilizujemo.
+ */
+vaadin-grid.task-grid::part(overdue) {
+    color: var(--vaadin-text-color-error, #d93025);
+    font-weight: var(--aura-font-weight-semibold, 600);
+}
+
+/* Grid redovi se mogu kliknuti, pa to pokazujemo i kursorom. */
+vaadin-grid.task-grid::part(row) {
+    cursor: pointer;
+}
+
+/* "Created ..." u dnu forme za izmenu. */
+.task-meta {
+    color: var(--vaadin-text-color-secondary);
+    font-size: var(--aura-font-size-s);
+}
