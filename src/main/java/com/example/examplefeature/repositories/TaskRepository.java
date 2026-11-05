@@ -1,5 +1,7 @@
-package com.example.examplefeature;
+package com.example.examplefeature.repositories;
 
+import com.example.examplefeature.enitities.Task;
+import com.example.examplefeature.models.TaskFilter;
 import jakarta.persistence.criteria.Predicate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

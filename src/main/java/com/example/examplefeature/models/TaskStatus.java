@@ -1,4 +1,6 @@
-package com.example.examplefeature;
+package com.example.examplefeature.models;
+
+import com.example.examplefeature.enitities.Task;
 
 /**
  * Status taska, kao kolone na Jira tabli.

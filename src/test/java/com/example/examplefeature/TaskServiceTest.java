@@ -1,5 +1,10 @@
 package com.example.examplefeature;
 
+import com.example.examplefeature.enitities.Task;
+import com.example.examplefeature.models.TaskFilter;
+import com.example.examplefeature.models.TaskPriority;
+import com.example.examplefeature.models.TaskStatus;
+import com.example.examplefeature.services.TaskService;
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.example.examplefeature;
+package com.example.examplefeature.models;
 
 import org.jspecify.annotations.Nullable;
 

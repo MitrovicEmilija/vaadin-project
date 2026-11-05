@@ -1,5 +1,7 @@
-package com.example.examplefeature;
+package com.example.examplefeature.enitities;
 
+import com.example.examplefeature.models.TaskPriority;
+import com.example.examplefeature.models.TaskStatus;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

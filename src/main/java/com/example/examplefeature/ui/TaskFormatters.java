@@ -1,8 +1,8 @@
 package com.example.examplefeature.ui;
 
-import com.example.examplefeature.Task;
-import com.example.examplefeature.TaskPriority;
-import com.example.examplefeature.TaskStatus;
+import com.example.examplefeature.enitities.Task;
+import com.example.examplefeature.models.TaskPriority;
+import com.example.examplefeature.models.TaskStatus;
 import com.vaadin.flow.component.badge.Badge;
 import com.vaadin.flow.component.badge.BadgeVariant;
 

@@ -1,4 +1,4 @@
-package com.example.examplefeature;
+package com.example.examplefeature.models;
 
 /**
  * Prioritet taska. Redosled konstanti je od najnizeg ka najvisem, pa sortiranje po {@code ordinal()} ima smisla.

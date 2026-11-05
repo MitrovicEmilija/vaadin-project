@@ -1,5 +1,8 @@
-package com.example.examplefeature;
+package com.example.examplefeature.services;
 
+import com.example.examplefeature.enitities.Task;
+import com.example.examplefeature.models.TaskFilter;
+import com.example.examplefeature.repositories.TaskRepository;
 import org.jspecify.annotations.Nullable;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;

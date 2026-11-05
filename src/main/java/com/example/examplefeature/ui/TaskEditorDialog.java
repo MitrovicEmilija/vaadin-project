@@ -1,9 +1,9 @@
 package com.example.examplefeature.ui;
 
-import com.example.examplefeature.Task;
-import com.example.examplefeature.TaskPriority;
-import com.example.examplefeature.TaskService;
-import com.example.examplefeature.TaskStatus;
+import com.example.examplefeature.enitities.Task;
+import com.example.examplefeature.models.TaskPriority;
+import com.example.examplefeature.services.TaskService;
+import com.example.examplefeature.models.TaskStatus;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
