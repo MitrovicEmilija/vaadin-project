@@ -6,6 +6,7 @@ import com.example.examplefeature.models.TaskFilter;
 import com.example.examplefeature.models.TaskPriority;
 import com.example.examplefeature.services.TaskService;
 import com.example.examplefeature.models.TaskStatus;
+import com.example.examplefeature.services.WorkLogService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -34,20 +35,6 @@ import static com.vaadin.flow.spring.data.VaadinSpringDataHelpers.toSpringPageRe
 
 /**
  * Glavni ekran: lista taskova sa brzim unosom, filterima i formom za izmenu.
- * <p>
- * <b>Vaadin koncepti u ovoj klasi:</b>
- * <ul>
- * <li><b>{@code @Route}, {@code @Menu}:</b> URL ove stranice i stavka u bocnom meniju. {@code MainLayout} sam
- * pravi meni od svih {@code @Menu} view-ova.</li>
- * <li><b>Lazy {@link Grid}:</b> {@code setItems(query -> ...)} ne ucitava sve taskove odjednom. Grid trazi deo po
- * deo, dok skrolujes.</li>
- * <li><b>Sortiranje:</b> {@code setSortProperty("dueDate")} kaze grid-u koji JPA property da posalje u
- * {@code Pageable}, kad korisnik klikne na zaglavlje kolone.</li>
- * <li><b>Component kolone:</b> {@code addComponentColumn} prikazuje pravu komponentu ({@code Badge}) u celiji.</li>
- * <li><b>Part names:</b> CSS "kuke" za stilizovanje pojedinacnih celija (crveni datum kad je rok prosao).</li>
- * <li><b>Filteri:</b> {@code ValueChangeMode.LAZY} salje vrednost tek kad prestanes da kucas, pa se baza ne
- * pretrazuje posle svakog slova.</li>
- * </ul>
  */
 @Route(value = "")
 @PageTitle("Task List")
@@ -63,6 +50,7 @@ class TaskListView extends VerticalLayout {
     static final String COL_CREATED = "creationDate";
 
     private final TaskService taskService;
+    private final WorkLogService workLogService;
 
     /** Trenutni filter. Grid ga cita pri svakom upitu, pa je dovoljno da ga zamenis i pozoves refreshAll(). */
     private TaskFilter filter = TaskFilter.empty();
@@ -80,8 +68,9 @@ class TaskListView extends VerticalLayout {
 
     final Grid<Task> taskGrid;
 
-    TaskListView(TaskService taskService) {
+    TaskListView(TaskService taskService, WorkLogService workLogService) {
         this.taskService = taskService;
+        this.workLogService = workLogService;
 
         // --- Brzi unos (kao u originalnom primeru): opis + rok + Enter ---
         description = new TextField();
@@ -220,7 +209,7 @@ class TaskListView extends VerticalLayout {
     }
 
     private void openEditor(Task task) {
-        new TaskEditorDialog(taskService, task, taskGrid.getDataProvider()::refreshAll).open();
+        new TaskEditorDialog(taskService, workLogService, task, taskGrid.getDataProvider()::refreshAll).open();
     }
 
     private void createTask() {

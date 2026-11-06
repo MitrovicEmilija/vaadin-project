@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.util.ArrayList;
 import java.util.Locale;
 
-interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
+public interface TaskRepository extends JpaRepository<Task, Long>, JpaSpecificationExecutor<Task> {
 
     // If you don't need a total row count, Slice is better than Page as it only performs a select query.
     // Page performs both a select and a count query.

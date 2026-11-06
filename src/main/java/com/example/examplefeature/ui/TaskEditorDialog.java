@@ -4,6 +4,7 @@ import com.example.examplefeature.enitities.Task;
 import com.example.examplefeature.models.TaskPriority;
 import com.example.examplefeature.services.TaskService;
 import com.example.examplefeature.models.TaskStatus;
+import com.example.examplefeature.services.WorkLogService;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyModifier;
 import com.vaadin.flow.component.button.Button;
@@ -16,6 +17,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.tabs.TabSheet;
 import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
@@ -25,25 +27,10 @@ import com.vaadin.flow.function.SerializableRunnable;
 
 import java.util.Locale;
 
-/**
- * Dijalog za dodavanje i izmenu taska.
- * <p>
- * <b>Vaadin koncepti u ovoj klasi:</b>
- * <ul>
- * <li><b>Kompozicija:</b> sopstvenu komponentu pravis tako sto nasledis postojecu ({@link Dialog}) i u konstruktoru
- * slozis decu. Spolja se koristi kao bilo koja druga komponenta: {@code new TaskEditorDialog(...).open()}.</li>
- * <li><b>{@link Binder}:</b> povezuje polja forme sa getterima i setterima entiteta. Radi konverziju tipova,
- * validaciju i prikaz gresaka.</li>
- * <li><b>{@link BeanValidationBinder}:</b> Binder koji sam cita {@code @NotBlank}, {@code @Pattern}... sa
- * {@link Task} i oznacava obavezna polja zvezdicom.</li>
- * <li><b>{@link FormLayout}:</b> responzivan raspored. Na sirokom ekranu stavlja polja u dve kolone, na uskom u
- * jednu.</li>
- * <li><b>{@link ConfirmDialog}:</b> gotov dijalog "Da li ste sigurni?" pre brisanja.</li>
- * </ul>
- */
 class TaskEditorDialog extends Dialog {
 
     private final TaskService taskService;
+    private final WorkLogService workLogService;
     private final Task task;
     private final SerializableRunnable onChange;
 
@@ -63,12 +50,15 @@ class TaskEditorDialog extends Dialog {
 
     final Binder<Task> binder = new BeanValidationBinder<>(Task.class);
 
+    final TabSheet tabs = new TabSheet();
+
     /**
      * @param task     task koji se menja; za nov task prosledi {@code taskService.newTask()}
      * @param onChange poziva se posle uspesnog cuvanja ili brisanja, da bi view osvezio grid
      */
-    TaskEditorDialog(TaskService taskService, Task task, SerializableRunnable onChange) {
+    TaskEditorDialog(TaskService taskService, WorkLogService workLogService, Task task, SerializableRunnable onChange) {
         this.taskService = taskService;
+        this.workLogService = workLogService;
         this.task = task;
         this.onChange = onChange;
 
@@ -79,7 +69,7 @@ class TaskEditorDialog extends Dialog {
         configureFields();
         bindFields();
 
-        add(createForm());
+        add(createTabs(isNew));
         getFooter().add(createButtons(isNew));
 
         // readBean kopira vrednosti iz entiteta u polja. Entitet se NE menja dok ne kliknes Save,
@@ -92,7 +82,7 @@ class TaskEditorDialog extends Dialog {
         jiraKey.setMaxLength(Task.JIRA_KEY_MAX_LENGTH);
         jiraKey.setHelperText("Optional");
         // Validacija tek kad korisnik napusti polje (blur), a ne posle svakog slova.
-        jiraKey.setValueChangeMode(ValueChangeMode.ON_BLUR);
+        jiraKey.setValueChangeMode(ValueChangeMode.ON_CHANGE);
 
         description.setMaxLength(Task.DESCRIPTION_MAX_LENGTH);
 
@@ -156,6 +146,27 @@ class TaskEditorDialog extends Dialog {
             form.add(created, 2);
         }
         return form;
+    }
+
+    private TabSheet createTabs(boolean isNew) {
+        // TabSheet = tabovi + sadrzaj. add("Naziv", komponenta) dodaje tab; sadrzaj se prikazuje kad je tab izabran.
+        tabs.add("Details", createForm());
+
+        // Nov task jos nema id u bazi, pa nema za sta da se veze unos vremena. Tab dodajemo samo za postojeci task.
+        if (!isNew) {
+            tabs.add("Time log", new WorkLogPanel(workLogService, task, onChange));
+        }
+
+        // Save i Delete se odnose na tab Details. Na tabu Time log ih sakrivamo da ne bi zbunjivali
+        // (unos vremena se cuva odmah, klikom na "Log").
+        tabs.addSelectedChangeListener(e -> {
+            boolean details = tabs.getSelectedIndex() == 0;
+            saveBtn.setVisible(details);
+            deleteBtn.setVisible(details);
+            cancelBtn.setText(details ? "Cancel" : "Close");
+        });
+        tabs.setWidthFull();
+        return tabs;
     }
 
     private Button[] createButtons(boolean isNew) {
